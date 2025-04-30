@@ -33,6 +33,7 @@ then
 	fi
 fi
 
+echo "writer.sh: writing $WRITE_STR to $WRITE_FILE"
 echo $WRITE_STR > $WRITE_FILE
 exit 0
 

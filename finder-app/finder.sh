@@ -24,6 +24,8 @@ then
 	exit 1
 fi
 
+echo "finder.sh: searching $SEARCH_STR in $SEARCH_DIR ..."
+
 FILES_FOUND=0
 MATCH_FOUND=0
 for EACHFILE in $(find $SEARCH_DIR -type f); do
