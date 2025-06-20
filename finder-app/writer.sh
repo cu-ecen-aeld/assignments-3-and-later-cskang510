@@ -1,28 +1,39 @@
-#!/bin/bash
+#!/bin/sh
+# assignment 1
+# Author: cskang510
 
-# the first argument is a path to a file name
-writefile="$1"
 
-# the second argument is a text string which will be written to the file
-writestr="$2"
-
-if [ $# -lt 2 ]; then
-    echo "runtime argument not specified"
-    exit 1
+if [ $# -lt 2 ]
+then
+	if [ $# -eq 1 ]
+	then
+		echo "Error: write string not specified"
+	else
+		echo "Error: write file and write string not specified"
+	fi
+		
+	exit 1	
+else
+	WRITE_FILE=$1
+	WRITE_STR=$2
 fi
 
-# find the path of the file
-dir=$(dirname "$writefile")
-
-# create the path if it does not exist
-if ! mkdir -p $dir; then
-    echo "Failed to create directory."
-    exit 1
+if [ -e $WRITE_FILE ]
+then
+	if [ ! -f $WRITE_FILE ]
+	then
+		echo "Error: $WRITE_FILE is not a file"
+		exit 1
+	else
+		if [ ! -w $WRITE_FILE ]
+		then
+			echo "Error: $WRITE_FILE is not writable"
+			exit 1
+		fi
+	fi
 fi
 
-# create a file using the file name with the string
-if ! echo $writestr > $writefile; then
-    echo "Failed to write to the file, $writefile"
-    exit 1
-fi
+echo "writer.sh: writing $WRITE_STR to $WRITE_FILE"
+echo $WRITE_STR > $WRITE_FILE
+exit 0
 

@@ -1,24 +1,38 @@
-#!/bin/bash
+#!/bin/sh
+# assignment 1
+# Author: cskang510
 
-# the first argument is a path to a directory on the filesystem, i.e. filesdir
-filesdir="$1"
 
-# the second argument is a text string which will be searched, i.e. searchstr
-searchstr="$2"
-
-if [ $# -lt 2 ]; then
-    echo "runtime argument not specified"
-    exit 1
+if [ $# -lt 2 ]
+then
+	if [ $# -eq 1 ]
+	then
+		echo "Error: search string not specified"
+	else
+		echo "Error: search directory and search string not specified"
+	fi
+		
+	exit 1	
+else
+	SEARCH_DIR=$1
+	SEARCH_STR=$2
 fi
 
-if [ ! -d "$filesdir" ]; then
-    echo "$filesdir is not an actual directory"
-    exit 1
+if [ ! -d $SEARCH_DIR ]
+then
+	echo "$SEARCH_DIR is not a folder"
+	exit 1
 fi
 
-# find the number of files in the path and subdirectory of path
-num_files=`find $filesdir -type f | wc -l`
+echo "finder.sh: searching $SEARCH_STR in $SEARCH_DIR ..."
 
-# find the number of matching lines of string in the path and subdirectory of path
-num_matches=`grep -r -l $searchstr $filesdir | wc -l`
-echo "The number of files are $num_files and the number of matching lines are $num_matches"
+FILES_FOUND=0
+MATCH_FOUND=0
+for EACHFILE in $(find $SEARCH_DIR -type f); do
+	FILES_FOUND=$(expr $FILES_FOUND + 1)
+	NUM_MATCH=$(grep -c SEARCH_STR $EACHFILE)
+	MATCH_FOUND=$((MATCH_FOUND + NUM_MATCH))
+done
+
+echo "The number of files are $FILES_FOUND and number of matching lines are $MATCH_FOUND"
+exit 0
