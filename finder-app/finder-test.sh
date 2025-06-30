@@ -62,7 +62,7 @@ echo "Running finder.sh to find the string ${WRITESTR} in the files written to $
 OUTPUTSTRING=$(./finder.sh "$WRITEDIR" "$WRITESTR")
 
 # remove temporary directories
-#rm -rf /tmp/aeld-data
+rm -rf /tmp/aeld-data
 
 set +e
 echo ${OUTPUTSTRING} | grep "${MATCHSTR}"
