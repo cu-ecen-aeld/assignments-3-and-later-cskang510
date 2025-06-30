@@ -7,6 +7,7 @@
     Syntax: writer <dir_path>/filename write_string
     Note: dir_path must exist before running this program.
 */
+
 #include <stdio.h>
 #include <syslog.h>
 
