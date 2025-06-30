@@ -2,7 +2,7 @@
     Assignement 2
     Author: cskang510
 
-    Date: 2023-10-15
+    Date: 2025-06-30
 
     Syntax: writer <dir_path>/filename write_string
     Note: dir_path must exist before running this program.
