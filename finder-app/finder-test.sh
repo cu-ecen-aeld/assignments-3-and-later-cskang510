@@ -48,19 +48,21 @@ then
 		exit 1
 	fi
 fi
-#echo "Removing the old writer utility and compiling as a native application"
+
+echo "Removing the old writer utility and compiling as a native application"
 #make clean
-#make
+make
 
 for i in $( seq 1 $NUMFILES)
 do
-	./writer.sh "$WRITEDIR/${username}$i.txt" "$WRITESTR"
+	./writer "$WRITEDIR/${username}$i.txt" "$WRITESTR"
 done
 
+echo "Running finder.sh to find the string ${WRITESTR} in the files written to ${WRITEDIR}"
 OUTPUTSTRING=$(./finder.sh "$WRITEDIR" "$WRITESTR")
 
 # remove temporary directories
-rm -rf /tmp/aeld-data
+#rm -rf /tmp/aeld-data
 
 set +e
 echo ${OUTPUTSTRING} | grep "${MATCHSTR}"
