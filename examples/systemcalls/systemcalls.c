@@ -136,9 +136,6 @@ bool do_exec_redirect(const char *outputfile, int count, ...)
         command[i] = va_arg(args, char *);
     }
     command[count] = NULL;
-    // this line is to avoid a compile warning before your implementation is complete
-    // and may be removed
-    command[count] = command[count];
 
 
 /*
@@ -156,15 +153,15 @@ bool do_exec_redirect(const char *outputfile, int count, ...)
         return false;
     }
 
-    // Redirect standard output to the file
-    if (dup2(fd, STDOUT_FILENO) < 0)
-    {
-        perror("Failed to redirect stdout");
-        close(fd);
-        va_end(args);
-        return false;
-    }
-    close(fd);
+    // // Redirect standard output to the file
+    // if (dup2(fd, STDOUT_FILENO) < 0)
+    // {
+    //     perror("Failed to redirect stdout");
+    //     close(fd);
+    //     va_end(args);
+    //     return false;
+    // }
+    // close(fd);
 
     int pid = fork();
     if (pid < 0)
@@ -175,14 +172,6 @@ bool do_exec_redirect(const char *outputfile, int count, ...)
     }
     else if (pid == 0)
     {        // Child process
-        // Close the original stdout file descriptor
-        close(STDOUT_FILENO);
-        // Redirect stdout to the file
-        fd = open(outputfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-        if (fd < 0)
-        {            perror("Failed to open output file in child");
-            exit(EXIT_FAILURE);
-        }
         dup2(fd, STDOUT_FILENO); // Redirect stdout to the file
         close(fd); // Close the file descriptor after duplicating
     }
