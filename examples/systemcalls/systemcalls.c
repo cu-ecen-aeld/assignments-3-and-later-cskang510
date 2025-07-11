@@ -1,5 +1,13 @@
 #include "systemcalls.h"
+#include <unistd.h>
+#include <stdlib.h>
+#include <sys/wait.h>
+#include <limits.h>
 
+#include <fcntl.h>
+#include <stdarg.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 /**
  * @param cmd the command to execute with system()
  * @return true if the command in @param cmd was executed
@@ -12,12 +20,29 @@ bool do_system(const char *cmd)
 
 /*
  * TODO  add your code here
+        perror("execv failed");
+        exit(-1); // Exit child process if execv fails
+    }
+    else
+    {
+    va_end(args);
+
+    return true;
+}
  *  Call the system() function with the command set in the cmd
  *   and return a boolean true if the system() call completed with success
  *   or false() if it returned a failure
 */
+    int result = system(cmd);
+    if (result == 0)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 
-    return true;
 }
 
 /**
@@ -43,11 +68,11 @@ bool do_exec(int count, ...)
     for(i=0; i<count; i++)
     {
         command[i] = va_arg(args, char *);
+#if 0  
+        printf("%s: Line %d Command[%d]: %s\n", __func__, __LINE__, i, command[i]);
+#endif
     }
     command[count] = NULL;
-    // this line is to avoid a compile warning before your implementation is complete
-    // and may be removed
-    command[count] = command[count];
 
 /*
  * TODO:
@@ -58,6 +83,37 @@ bool do_exec(int count, ...)
  *   as second argument to the execv() command.
  *
 */
+    int pid = fork();
+    if (pid < 0)
+    {
+        perror("fork failed");
+        va_end(args);
+        return false;
+    }
+    else if (pid == 0)
+    {
+        // Child process
+        execv(command[0], command);
+        perror("execv failed");
+        exit(-1); // Exit child process if execv fails
+    }
+    else
+    {
+        // Parent process
+        int status;
+        waitpid(pid, &status, 0); // Wait for child process to finish
+        if (WIFEXITED(status) && WEXITSTATUS(status) == 0)
+        {
+            va_end(args);
+            return true; // Command executed successfully
+        }
+        else
+        {
+            va_end(args);
+            perror("Command execution failed");
+            return false; // Command failed
+        }
+    }
 
     va_end(args);
 
@@ -92,7 +148,64 @@ bool do_exec_redirect(const char *outputfile, int count, ...)
  *   The rest of the behaviour is same as do_exec()
  *
 */
+    int fd = open(outputfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+    if (fd < 0)
+    {
+        perror("Failed to open output file");
+        va_end(args);
+        return false;
+    }
 
+    // Redirect standard output to the file
+    if (dup2(fd, STDOUT_FILENO) < 0)
+    {
+        perror("Failed to redirect stdout");
+        close(fd);
+        va_end(args);
+        return false;
+    }
+    close(fd);
+
+    int pid = fork();
+    if (pid < 0)
+    {
+        perror("fork failed");
+        va_end(args);
+        return false;
+    }
+    else if (pid == 0)
+    {        // Child process
+        // Close the original stdout file descriptor
+        close(STDOUT_FILENO);
+        // Redirect stdout to the file
+        fd = open(outputfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+        if (fd < 0)
+        {            perror("Failed to open output file in child");
+            exit(EXIT_FAILURE);
+        }
+        dup2(fd, STDOUT_FILENO); // Redirect stdout to the file
+        close(fd); // Close the file descriptor after duplicating
+    }
+    else
+    {        // Parent processhttps://stackoverflow.com/a/13784315/1446624
+        int status;
+        waitpid(pid, &status, 0); // Wait for child process to finish
+        if (WIFEXITED(status) && WEXITSTATUS(status) == 0)
+        {
+            va_end(args);
+            return true; // Command executed successfully
+        }
+        else
+        {
+            va_end(args);
+            perror("Command execution failed in parent");
+            return false; // Command failed
+        }
+    }
+
+    // Call execv
+    execv(command[0], command);
+    perror("execv failed");
     va_end(args);
 
     return true;
