@@ -5,8 +5,10 @@
 set -e
 set -u
 
+
 OUTDIR=/home/csk2/Output/aeld
 KERNEL_REPO=git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git
+
 KERNEL_VERSION=v5.15.163
 BUSYBOX_VERSION=1_33_1
 FINDER_APP_DIR=$(realpath $(dirname $0))
