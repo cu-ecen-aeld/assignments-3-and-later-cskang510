@@ -5,8 +5,11 @@
 set -e
 set -u
 
-
-OUTDIR=/home/csk2/Output/aeld
+#
+# before submitting the homework
+# the temporary directory should be replaced with /tmp/aeld
+#
+OUTDIR=/tmp/aeld
 KERNEL_REPO=git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git
 
 KERNEL_VERSION=v5.15.163
