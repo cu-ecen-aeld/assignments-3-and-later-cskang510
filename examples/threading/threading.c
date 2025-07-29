@@ -31,25 +31,7 @@ void* threadfunc(void* thread_param)
     thread_func_args->thread_complete_success = true;
     // Return the thread_data structure to the joiner thread
     DEBUG_LOG("Thread exiting");
-    // Note: The thread will automatically clean up its resources when it exits.
-    // The thread will also handle the mutex operations as specified in the thread_data structure.
-    // The thread will sleep for wait_to_obtain_ms, then obtain the mutex, hold it for wait_to_release_ms,
-    // and then release it before exiting.
-    // The thread will return the thread_data structure when it exits, which can be used to
-    // free memory as well as to check thread_complete_success for successful exit.
-    // The joiner thread should call pthread_join to wait for the thread to complete and
-    // retrieve the thread_data structure.
-    // The joiner thread should also free the memory allocated for thread_data after it has
-    // retrieved the thread_complete_success value.
-    // This is typically done in the main thread or a dedicated joiner thread.
-    // The thread will return the thread_data structure when it exits, which can be used to
-    // free memory as well as to check thread_complete_success for successful exit.
-    // The joiner thread should call pthread_join to wait for the thread to complete and
-    // retrieve the thread_data structure.
-    // The joiner thread should also free the memory allocated for thread_data after it has
-    // retrieved the thread_complete_success value.
-    // This is typically done in the main thread or a dedicated joiner thread.
-    // The thread will return the thread_data structure when it exits, which can be used to
+
     return thread_param;
 }
 
@@ -59,7 +41,7 @@ bool start_thread_obtaining_mutex(pthread_t *thread, pthread_mutex_t *mutex,int 
      * TODO: allocate memory for thread_data, setup mutex and wait arguments, pass thread_data to created thread
      * using threadfunc() as entry point.
      *
-     * return true if successful.
+     * return true if successful.    // Note: The thread will automatically clean up its resources when it exits.
      *
      * See implementation details in threading.h file comment block
      */
